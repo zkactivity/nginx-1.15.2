@@ -564,6 +564,8 @@ if [ $HTTP = YES ]; then
 
         . auto/module
     fi
+    HTTP_MODULES="$HTTP_MODULES ngx_http_test_module"
+    HTTP_SRCS="$HTTP_SRCS src/http/modules/ngx_http_test_module.c"
 
     if [ $HTTP_LIMIT_CONN = YES ]; then
         ngx_module_name=ngx_http_limit_conn_module
