@@ -23,7 +23,10 @@ cat << END                                                     > $NGX_MAKEFILE
 CC =	$CC
 CFLAGS = $CFLAGS
 CPP =	$CPP
-LINK =	$LINK
+#LINK =	$LINK
+CXX =   g++
+CXXFLAGS = -std=c++0x -Wall
+LINK =  g++
 
 END
 
@@ -410,6 +413,7 @@ if test -n "$NGX_ADDON_SRCS"; then
 
     ngx_cc="\$(CC) $ngx_compile_opt \$(CFLAGS) $ngx_use_pch \$(ALL_INCS)"
 
+    ngx_cxx="\$(CXX) $ngx_compile_opt \$(CXXFLAGS) $ngx_use_pch \$(ALL_INCS)"
     for ngx_src in $NGX_ADDON_SRCS
     do
         ngx_obj="addon/`basename \`dirname $ngx_src\``"
@@ -424,11 +428,17 @@ if test -n "$NGX_ADDON_SRCS"; then
                   -e "s#^\(.*\.\)S\\$#$ngx_objs_dir\1$ngx_objext#g"`
 
         ngx_src=`echo $ngx_src | sed -e "s/\//$ngx_regex_dirsep/g"`
+        ext=`echo ${ngx_src} | cut -d . -f 2`
+        ngx_gcc=$ngx_cc
+        if [ $ext = "cpp" ]; then
+            ngx_gcc=$ngx_cxx
+        fi
 
         cat << END                                            >> $NGX_MAKEFILE
 
 $ngx_obj:	\$(ADDON_DEPS)$ngx_cont$ngx_src
-	$ngx_cc$ngx_tab$ngx_objout$ngx_obj$ngx_tab$ngx_src$NGX_AUX
+	#$ngx_cc$ngx_tab$ngx_objout$ngx_obj$ngx_tab$ngx_src$NGX_AUX
+    $ngx_gcc$ngx_tab$ngx_objout$ngx_obj$ngx_tab$ngx_src$NGX_AUX
 
 END
      done
